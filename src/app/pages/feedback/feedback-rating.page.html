@@ -1,0 +1,156 @@
+<ion-content>
+  <div class="app-wrapper">
+    
+    <!-- SIDEBAR - NO ICONS -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>Tourism Admin</h3>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li>
+          <a (click)="navigateTo('dashboard')">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('bookings')">
+            Tour Guide Bookings
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('feedback')" class="active">
+            Feedback & Ratings
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('monitoring')">
+            Monitor Real-Time Activity
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('number-of-tourist')">
+            Number of Tourist / Tours
+          </a>
+        </li>
+        <li class="logout">
+          <a (click)="logout()">
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="top-bar">
+        <h2>Feedback & Ratings</h2>
+        <button class="btn-secondary">Export</button>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon yellow">⭐</div>
+          <div>
+            <p>Overall Rating</p>
+            <h3>4.8</h3>
+            <small>2,847 reviews</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">🏆</div>
+          <div>
+            <p>Top Rated</p>
+            <h3>Capitol Commons</h3>
+            <small>4.9 ⭐</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">📊</div>
+          <div>
+            <p>Most Reviewed</p>
+            <h3>Rainforest Park</h3>
+            <small>487 reviews</small>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">📈</div>
+          <div>
+            <p>Satisfaction</p>
+            <h3>92%</h3>
+            <small class="positive">+3.2%</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- POPULAR SPOTS TABLE -->
+      <div class="card">
+        <h4>Popular Tourist Spots</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Destination</th>
+                <th>Rating</th>
+                <th>Reviews</th>
+                <th>Satisfaction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let spot of popularSpots">
+                <td>#{{ spot.rank }}</td>
+                <td>{{ spot.name }}</td>
+                <td>{{ spot.rating }} ⭐</td>
+                <td>{{ spot.reviews }}</td>
+                <td><span class="badge-success">{{ spot.satisfaction }}%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FEEDBACK TABLE -->
+      <div class="card">
+        <h4>Recent Feedback</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tourist</th>
+                <th>Destination</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let review of reviews">
+                <td>{{ review.id }}</td>
+                <td>{{ review.name }}</td>
+                <td>{{ review.destination }}</td>
+                <td>{{ review.rating }} ⭐</td>
+                <td>{{ review.comment }}</td>
+                <td>{{ review.date }}</td>
+                <td>
+                  <span [class.badge-success]="review.status === 'Published'" 
+                        [class.badge-warning]="review.status === 'Pending'">
+                    {{ review.status }}
+                  </span>
+                </td>
+                <td>
+                  <button class="action-btn view">View</button>
+                  <button class="action-btn cancel">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

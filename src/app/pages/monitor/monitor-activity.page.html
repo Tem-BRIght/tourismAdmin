@@ -1,0 +1,135 @@
+<ion-content>
+  <div class="app-wrapper">
+    
+    <!-- SIDEBAR - NO ICONS -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>Tourism Admin</h3>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li>
+          <a (click)="navigateTo('dashboard')">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('bookings')">
+            Tour Guide Bookings
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('feedback')">
+            Feedback & Ratings
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('monitoring')" class="active">
+            Monitor Real-Time Activity
+          </a>
+        </li>
+        <li>
+          <a (click)="navigateTo('number-of-tourist')">
+            Number of Tourist / Tours
+          </a>
+        </li>
+        <li class="logout">
+          <a (click)="logout()">
+            Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="top-bar">
+        <h2>Real-Time Activity Monitor</h2>
+        <div>
+          <button class="btn-secondary">Jan 15, 2024</button>
+          <button class="btn-primary" style="margin-left: 10px;">Generate Report</button>
+        </div>
+      </div>
+
+      <!-- STATS CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats">
+          <div class="stat-icon">{{ stat.icon }}</div>
+          <div>
+            <p>{{ stat.label }}</p>
+            <h3>{{ stat.value }}</h3>
+            <small class="positive">{{ stat.change }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="monitor-grid">
+        <!-- Current Tours -->
+        <div class="card">
+          <h4>Current Tours</h4>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Destination</th>
+                  <th>Guide</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tour of currentTours">
+                  <td>{{ tour.id }}</td>
+                  <td>{{ tour.destination }}</td>
+                  <td>{{ tour.guide }}</td>
+                  <td>{{ tour.size }}</td>
+                  <td><span class="badge" [class.badge-success]="tour.status === 'Active'" [class.badge-warning]="tour.status === 'Paused'">{{ tour.status }}</span></td>
+                  <td><button class="action-btn view">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Live Feed -->
+        <div class="card">
+          <h4>Live Activity Feed</h4>
+          <div class="feed-list">
+            <div class="feed-item" *ngFor="let activity of activities">
+              <div class="feed-icon">{{ activity.icon }}</div>
+              <div>
+                <strong>{{ activity.title }}</strong>
+                <p>{{ activity.time }}</p>
+              </div>
+              <span class="badge">{{ activity.type }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completion Analytics -->
+        <div class="card">
+          <h4>Tour Completion</h4>
+          <div class="completion-circle">
+            <div class="percentage">85%</div>
+            <p>On-time completion</p>
+            <small>Avg: 3.2 hours</small>
+          </div>
+        </div>
+
+        <!-- System Activity -->
+        <div class="card">
+          <h4>Peak Hours</h4>
+          <div class="peak-hours">
+            <div>12:00 - 14:00</div>
+            <div class="progress">
+              <div class="progress-bar" style="width:85%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
