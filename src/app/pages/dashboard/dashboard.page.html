@@ -1,0 +1,159 @@
+<ion-content>
+  <div class="app-wrapper">
+    
+    <!-- SIDEBAR - Using tour guide styles -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>Tourism Admin</h3>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li><a (click)="navigateTo('dashboard')" class="active">Dashboard</a></li>
+        <li><a (click)="navigateTo('bookings')">Tour Guide Bookings</a></li>
+        <li><a (click)="navigateTo('feedback')">Feedback & Ratings</a></li>
+        <li><a (click)="navigateTo('monitoring')">Monitor Real-Time Activity</a></li>
+        <li><a (click)="navigateTo('number-of-tourist')">Number of Tourist / Tours</a></li>
+        <li class="logout"><a (click)="logout()">Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="top-bar">
+        <h2>Dashboard</h2>
+        <span class="badge">{{ userEmail || 'Admin' }}</span>
+      </div>
+
+      <!-- STATS CARDS - Using tour guide style -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">👥</div>
+          <div class="stat-details">
+            <span class="stat-label">Total Tourists</span>
+            <span class="stat-number">{{ totalTourists }}</span>
+            <span class="stat-change positive">+8.2%</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">🎯</div>
+          <div class="stat-details">
+            <span class="stat-label">Active Tour Guides</span>
+            <span class="stat-number">{{ activeGuides }}</span>
+            <span class="stat-change positive">+3 new</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">📋</div>
+          <div class="stat-details">
+            <span class="stat-label">Total Bookings</span>
+            <span class="stat-number">{{ totalBookings }}</span>
+            <span class="stat-change positive">+12.5%</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon orange">📍</div>
+          <div class="stat-details">
+            <span class="stat-label">Most Visited</span>
+            <span class="stat-number">{{ mostVisited }}</span>
+            <span class="stat-sub">{{ mostVisitedCount }} today</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD GRID -->
+      <div class="dashboard-grid">
+        <!-- Real-Time Monitoring - Clickable -->
+        <div class="card wide clickable" (click)="viewMonitoring()">
+          <div class="card-header">
+            <h4>Real-Time Monitoring</h4>
+            <span class="live-badge">● LIVE</span>
+          </div>
+          <div class="map-placeholder">
+            <div class="map-marker" *ngFor="let data of realTimeData">
+              📍 {{ data.count }} at {{ data.location }}
+            </div>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item" *ngFor="let data of realTimeData">
+              <span class="activity-dot blue"></span>
+              <span>{{ data.count }} tourists at {{ data.location }}</span>
+            </div>
+          </div>
+          <div class="view-link">Click to view full details →</div>
+        </div>
+
+        <!-- System Insights -->
+        <div class="card">
+          <div class="card-header">
+            <h4>System Insights</h4>
+          </div>
+          <p class="insight-label">Tourist Satisfaction</p>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 85%"></div>
+            <span class="progress-value">85%</span>
+          </div>
+          <div class="pie-chart-placeholder"></div>
+        </div>
+
+        <!-- PEAK HOURS - New card using same design as monitor page -->
+        <div class="card">
+          <div class="card-header">
+            <h4>Peak Hours</h4>
+          </div>
+          <div class="peak-hours-graph">
+            <div class="graph-container">
+              <div class="bar-container" *ngFor="let hour of peakHours">
+                <div class="bar-label">{{ hour.hour }}</div>
+                <div class="bar-wrapper">
+                  <div class="bar" [style.width.%]="(hour.value / 180) * 100">
+                    <span class="bar-value">{{ hour.value }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="graph-footer">
+              <span class="peak-indicator">Peak: 12pm - 2pm (180 tourists)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visitor Growth -->
+        <div class="card wide">
+          <div class="card-header">
+            <h4>Visitor Growth Over Time</h4>
+          </div>
+          <div class="chart-placeholder">
+            <div class="bar-chart">
+              <div class="bar" style="height: 40px"></div>
+              <div class="bar" style="height: 65px"></div>
+              <div class="bar" style="height: 45px"></div>
+              <div class="bar" style="height: 80px"></div>
+              <div class="bar" style="height: 55px"></div>
+              <div class="bar" style="height: 70px"></div>
+              <div class="bar" style="height: 90px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popular Destinations -->
+        <div class="card">
+          <div class="card-header">
+            <h4>Popular Destinations</h4>
+          </div>
+          <ul class="destination-list">
+            <li *ngFor="let dest of popularDestinations">
+              <span>{{ dest.name }}</span>
+              <span class="trend" [class.positive]="dest.trend === 'up'" [class.negative]="dest.trend === 'down'">
+                {{ dest.growth }}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
