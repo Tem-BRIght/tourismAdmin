@@ -1,5 +1,6 @@
 // src/app/services/firebase.service.ts
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { initializeApp, getApps } from 'firebase/app';
 import {
   getDatabase,
@@ -71,6 +72,16 @@ export class FirebaseService {
   onValue(path: string, callback: (data: any) => void): () => void {
     const dbRef = ref(this.db, path);
     return onValue(dbRef, (snapshot) => callback(snapshot.val()));
+  }
+
+  /**
+   * Listen to real-time data changes at a path and return an Observable.
+   */
+  listenToData(path: string): Observable<any> {
+    return new Observable(subscriber => {
+      const unsubscribe = this.onValue(path, data => subscriber.next(data));
+      return unsubscribe;
+    });
   }
 
   // ─── Firebase Storage ────────────────────────────────────────────

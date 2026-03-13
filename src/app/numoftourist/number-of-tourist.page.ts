@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular/standalone';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../services/auth.service';
 
 interface MonthlyData {
   month: string;

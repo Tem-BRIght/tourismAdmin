@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonCheckbox, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonLabel, IonInput, IonCheckbox, IonButton } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonCheckbox, IonButton, CommonModule, FormsModule]
+  imports: [IonContent, IonItem, IonLabel, IonInput, IonCheckbox, IonButton, CommonModule, FormsModule]
 })
 export class LoginPage implements OnInit {
   email: string = '';
