@@ -1,0 +1,313 @@
+<ion-content>
+  <div class="app-wrapper">
+    
+    <!-- SIDEBAR - NO ICONS (unchanged) -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>Tourism Admin</h3>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li>
+          <a (click)="navigateTo('dashboard')">Dashboard</a>
+        </li>
+        <li>
+          <a (click)="navigateTo('bookings')">Tour Guide Bookings</a>
+        </li>
+        <li>
+          <a (click)="navigateTo('feedback')">Feedback & Ratings</a>
+        </li>
+        <li>
+          <a (click)="navigateTo('monitoring')" class="active">Monitor Real-Time Activity</a>
+        </li>
+        <li>
+          <a (click)="navigateTo('number-of-tourist')">Number of Tourist / Tours</a>
+        </li>
+        <li class="logout">
+          <a (click)="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="top-bar">
+        <h2>Real-Time Activity Monitor</h2>
+        <div>
+          <button class="btn-secondary">March 10, 2026</button>
+          <button class="btn-primary" style="margin-left: 10px;" (click)="openAddDestinationModal()">+ Add Destination</button>
+          <button class="btn-outline" style="margin-left: 10px;">Generate Report</button>
+        </div>
+      </div>
+
+      <!-- STATS CARDS (now from Firebase) -->
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats">
+          <div class="stat-icon">{{ stat.icon }}</div>
+          <div>
+            <p>{{ stat.label }}</p>
+            <h3>{{ stat.value }}</h3>
+            <small class="positive">{{ stat.change }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESTINATIONS CARD (new – matches original card style) -->
+      <div class="card" style="margin-bottom: 20px;">
+        <h4>📍 Destinations</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Address</th>
+                <th>Location</th>
+                <th>Image</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let dest of destinations">
+                <td>{{ dest.name }}</td>
+                <td>{{ dest.description }}</td>
+                <td>{{ dest.address }}</td>
+                <td *ngIf="dest.location">
+                  {{ dest.location.lat | number:'1.4-4' }}, {{ dest.location.lng | number:'1.4-4' }}
+                </td>
+                <td *ngIf="!dest.location">-</td>
+                <td>
+                  <img
+                    *ngIf="dest.imageUrl"
+                    [src]="dest.imageUrl"
+                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
+                  />
+                </td>
+              </tr>
+              <tr *ngIf="destinations.length === 0">
+                <td colspan="5" style="text-align: center; color: #999;">
+                  No destinations yet. Click "+ Add Destination" to create one.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MAIN GRID (original – now using Firebase data) -->
+      <div class="monitor-grid">
+        <div class="card">
+          <h4>Current Tours</h4>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Destination</th>
+                  <th>Guide</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let tour of currentTours">
+                  <td>{{ tour.id }}</td>
+                  <td>{{ tour.destination }}</td>
+                  <td>{{ tour.guide }}</td>
+                  <td>{{ tour.size }}</td>
+                  <td>
+                    <span class="badge" 
+                          [class.badge-success]="tour.status === 'Active'" 
+                          [class.badge-warning]="tour.status === 'Paused'">
+                      {{ tour.status }}
+                    </span>
+                  </td>
+                  <td><button class="action-btn view">View</button></td>
+                </tr>
+                <tr *ngIf="currentTours.length === 0">
+                  <td colspan="6" style="text-align: center; color: #999;">
+                    No active tours.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Live Activity Feed</h4>
+          <div class="feed-list">
+            <div class="feed-item" *ngFor="let activity of activities">
+              <div class="feed-icon">{{ activity.icon }}</div>
+              <div>
+                <strong>{{ activity.title }}</strong>
+                <p>{{ activity.time }}</p>
+              </div>
+              <span class="badge">{{ activity.type }}</span>
+            </div>
+            <div *ngIf="activities.length === 0" style="text-align: center; color: #999; padding: 20px;">
+              No recent activity.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Tour Completion</h4>
+          <div class="completion-circle">
+            <div class="percentage">85%</div>
+            <p>On-time completion</p>
+            <small>Avg: 3.2 hours</small>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>Peak Hours</h4>
+          <div class="peak-hours">
+            <div>12:00 - 14:00</div>
+            <div class="progress">
+              <div class="progress-bar" style="width:85%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- ============================================================ -->
+  <!-- ADD DESTINATION MODAL OVERLAY                                -->
+  <!-- ============================================================ -->
+  <div class="modal-overlay" *ngIf="showAddDestinationModal" (click)="onOverlayClick($event)">
+    <div class="modal-panel" #modalPanel>
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <span class="modal-header-icon">📍</span>
+          <div>
+            <h2 class="modal-title">Add Destination</h2>
+            <p class="modal-subtitle">Create a new tour destination with details</p>
+          </div>
+        </div>
+        <button class="modal-close" (click)="closeAddDestinationModal()">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+
+        <!-- SECTION: Cover Image -->
+        <div class="form-section">
+          <label class="section-label">Cover Image</label>
+          <div class="image-upload-zone" (click)="triggerImageUpload()" [class.has-image]="newDestination.imagePreview">
+            <input type="file" #imageInput accept="image/*" style="display:none" (change)="onImageSelected($event)">
+            <div *ngIf="!newDestination.imagePreview" class="upload-placeholder">
+              <span class="upload-icon">🖼️</span>
+              <p>Click to upload destination image</p>
+              <small>PNG, JPG, WEBP up to 5MB</small>
+            </div>
+            <img *ngIf="newDestination.imagePreview" [src]="newDestination.imagePreview" class="image-preview" alt="Preview">
+            <button *ngIf="newDestination.imagePreview" class="image-remove" (click)="removeImage($event)">✕</button>
+          </div>
+        </div>
+
+        <!-- SECTION: Basic Info -->
+        <div class="form-section">
+          <label class="section-label">Destination Name <span class="required">*</span></label>
+          <input class="form-input" type="text" placeholder="e.g. Pasig Museum, Rainforest Park..." [(ngModel)]="newDestination.name">
+        </div>
+
+        <div class="form-section">
+          <label class="section-label">Description <span class="required">*</span></label>
+          <textarea class="form-input form-textarea" placeholder="Briefly describe this destination..." [(ngModel)]="newDestination.description" rows="3"></textarea>
+        </div>
+
+        <!-- SECTION: Info Blocks (multiple) -->
+        <div class="form-section">
+          <div class="section-label-row">
+            <label class="section-label">Information Blocks</label>
+            <button class="add-block-btn" (click)="addInfoBlock()">+ Add Block</button>
+          </div>
+          <p class="section-hint">Add titled sections with bullet or check-style entries.</p>
+
+          <div class="info-blocks-list">
+            <div class="info-block" *ngFor="let block of newDestination.infoBlocks; let bi = index">
+              
+              <!-- Block Header -->
+              <div class="info-block-header">
+                <input class="block-title-input" type="text" placeholder="Block title (e.g. What to Expect, Reminders...)" [(ngModel)]="block.title">
+                <div class="block-type-toggle">
+                  <button class="type-btn" [class.active]="block.type === 'none'" (click)="setBlockType(bi, 'none')" title="No marker">
+                    <span class="type-icon">—</span> None
+                  </button>
+                  <button class="type-btn" [class.active]="block.type === 'bullet'" (click)="setBlockType(bi, 'bullet')" title="Bullet list">
+                    <span class="type-icon">•</span> Bullet
+                  </button>
+                  <button class="type-btn" [class.active]="block.type === 'check'" (click)="setBlockType(bi, 'check')" title="Check list">
+                    <span class="type-icon">✔</span> Check
+                  </button>
+                </div>
+                <button class="remove-block-btn" (click)="removeInfoBlock(bi)">🗑</button>
+              </div>
+
+              <!-- Block Items (hidden when type is none) -->
+              <div class="block-items" *ngIf="block.type !== 'none'">
+                <div class="block-item-row" *ngFor="let item of block.items; let ii = index">
+                  <span class="item-marker" [class.check-marker]="block.type === 'check'" [class.bullet-marker]="block.type === 'bullet'">
+                    {{ block.type === 'check' ? '✔' : '•' }}
+                  </span>
+                  <input class="block-item-input" type="text" placeholder="Enter item...">
+                  <button class="remove-item-btn" (click)="removeBlockItem(bi, ii)">✕</button>
+                </div>
+                <button class="add-item-btn" (click)="addBlockItem(bi)">+ Add item</button>
+              </div>
+              <!-- None type: plain text area -->
+              <div class="block-items" *ngIf="block.type === 'none'">
+                <textarea class="block-item-input block-textarea" placeholder="Enter description text..." [(ngModel)]="block.plainText" rows="3"></textarea>
+              </div>
+
+            </div>
+
+            <!-- Empty state -->
+            <div class="empty-blocks" *ngIf="newDestination.infoBlocks.length === 0">
+              <span>No information blocks yet.</span>
+              <button class="add-block-btn" (click)="addInfoBlock()">+ Add your first block</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Location Picker -->
+        <div class="form-section">
+          <div class="section-label-row">
+            <label class="section-label">Location <span class="required">*</span></label>
+            <span class="location-hint" *ngIf="newDestination.location">
+              📌 {{ newDestination.location.lat | number:'1.4-4' }}, {{ newDestination.location.lng | number:'1.4-4' }}
+            </span>
+          </div>
+          <p class="section-hint">Tap on the map to pin the exact destination location.</p>
+
+          <div class="map-container">
+            <!-- Leaflet/OpenStreetMap container -->
+            <div id="osm-map" class="map-inner"></div>
+
+            <!-- Hint text when no location selected -->
+            <div class="map-tap-hint" *ngIf="!newDestination.location">
+              <span>👆 Tap map to pin location</span>
+            </div>
+          </div>
+
+          <!-- Address text field -->
+          <input class="form-input" style="margin-top:10px;" type="text" placeholder="Or type address / landmark..." [(ngModel)]="newDestination.address">
+        </div>
+
+      </div><!-- end modal-body -->
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeAddDestinationModal()">Cancel</button>
+        <button class="btn-save" (click)="saveDestination()" [disabled]="!canSaveDestination()">
+          <span>💾</span> Save Destination
+        </button>
+      </div>
+
+    </div><!-- end modal-panel -->
+  </div><!-- end modal-overlay -->
+</ion-content>

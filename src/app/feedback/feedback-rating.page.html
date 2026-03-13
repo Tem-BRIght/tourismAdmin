@@ -1,0 +1,209 @@
+<ion-content>
+  <div class="app-wrapper">
+    
+    <!-- SIDEBAR - Uniform style -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>Tourism Admin</h3>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li><a (click)="navigateTo('dashboard')">Dashboard</a></li>
+        <li><a (click)="navigateTo('bookings')">Tour Guide Bookings</a></li>
+        <li><a (click)="navigateTo('feedback')" class="active">Feedback & Ratings</a></li>
+        <li><a (click)="navigateTo('monitoring')">Monitor Real-Time Activity</a></li>
+        <li><a (click)="navigateTo('number-of-tourist')">Number of Tourist / Tours</a></li>
+        <li class="logout"><a (click)="logout()">Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <div class="top-bar">
+        <h2>Feedback & Ratings</h2>
+        <button class="btn-export" (click)="exportData()">Export Data</button>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon rating">⭐</div>
+          <div class="stat-details">
+            <span class="stat-label">Overall Rating</span>
+            <span class="stat-number">{{ overallRating }}</span>
+            <span class="stat-sub">{{ totalReviews }} reviews</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon top">🏆</div>
+          <div class="stat-details">
+            <span class="stat-label">Top Rated</span>
+            <span class="stat-number">{{ topRatedDestination }}</span>
+            <span class="stat-sub">{{ topRatedScore }} ⭐</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon reviewed">📊</div>
+          <div class="stat-details">
+            <span class="stat-label">Most Reviewed</span>
+            <span class="stat-number">{{ mostReviewedSpot }}</span>
+            <span class="stat-sub">{{ mostReviewedCount }} reviews</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon satisfaction">📈</div>
+          <div class="stat-details">
+            <span class="stat-label">Satisfaction</span>
+            <span class="stat-number">{{ satisfactionRate }}%</span>
+            <span class="stat-sub positive">+{{ satisfactionGrowth }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- POPULAR SPOTS CARD -->
+      <div class="card">
+        <div class="card-header">
+          <h4>Popular Tourist Spots</h4>
+          <span class="badge-info">{{ popularSpots.length }} destinations</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Destination</th>
+                <th>Rating</th>
+                <th>Reviews</th>
+                <th>Satisfaction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let spot of popularSpots">
+                <td><span class="rank">#{{ spot.rank }}</span></td>
+                <td>{{ spot.name }}</td>
+                <td>
+                  <span class="rating-stars">
+                    <span class="stars">⭐</span> {{ spot.rating }}
+                  </span>
+                </td>
+                <td>{{ spot.reviews }}</td>
+                <td><span class="badge-success">{{ spot.satisfaction }}%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FEEDBACK TABLE - Fixed structure -->
+      <div class="card">
+        <div class="card-header">
+          <h4>Recent Feedback</h4>
+          <span class="badge-info">{{ paginatedReviews.length }} feedback entries</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tourist</th>
+                <th>Destination</th>
+                <th>Date</th>
+                <th class="text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let review of paginatedReviews">
+                <td><span class="feedback-id">{{ review.id }}</span></td>
+                <td>{{ review.name }}</td>
+                <td>{{ review.destination }}</td>
+                <td>{{ review.date }}</td>
+                <td class="text-center">
+                  <button class="action-link view" (click)="viewFeedback(review)">View</button>
+                  <span class="action-separator">|</span>
+                  <button *ngIf="canDeleteFeedback" class="action-link delete" (click)="deleteFeedback(review.id)">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGINATION -->
+      <div class="pagination">
+        <span class="pagination-info">
+          Showing {{ (currentPage-1)*itemsPerPage + 1 }} - 
+          {{ currentPage*itemsPerPage > totalItems ? totalItems : currentPage*itemsPerPage }} 
+          of {{ totalItems }}
+        </span>
+        <div class="pagination-controls">
+          <button class="page-btn" (click)="previousPage()" [disabled]="currentPage === 1">‹ Prev</button>
+          <button class="page-btn" *ngFor="let page of getPageArray()" 
+                  (click)="changePage(page)" [class.active]="currentPage === page">{{ page }}</button>
+          <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Next ›</button>
+        </div>
+      </div>
+
+      <!-- VIEW FEEDBACK MODAL -->
+      <div class="modal-overlay" *ngIf="showFeedbackModal" (click)="closeModal()">
+        <div class="modal-container feedback-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h3>Feedback Details</h3>
+            <button class="modal-close" (click)="closeModal()">×</button>
+          </div>
+          <div class="modal-body" *ngIf="selectedFeedback">
+            
+            <!-- Destination Image -->
+            <div class="destination-image">
+              <div class="image-placeholder">
+                <span class="image-icon">📸</span>
+                <span>{{ selectedFeedback.destination }}</span>
+              </div>
+            </div>
+
+            <!-- Rating Display -->
+            <div class="rating-display">
+              <div class="rating-label">Rating</div>
+              <div class="rating-stars-large">
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star">⭐</span>
+                <span class="star" [class.inactive]="selectedFeedback.rating < 5">⭐</span>
+                <span class="rating-value">{{ selectedFeedback.rating }}/5</span>
+              </div>
+            </div>
+
+            <!-- Comment -->
+            <div class="comment-section">
+              <div class="comment-label">Tourist Comment</div>
+              <div class="comment-box">
+                "{{ selectedFeedback.comment }}"
+              </div>
+            </div>
+
+            <!-- Metadata -->
+            <div class="metadata">
+              <div class="metadata-item">
+                <span class="metadata-label">Tourist:</span>
+                <span class="metadata-value">{{ selectedFeedback.name }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Destination:</span>
+                <span class="metadata-value">{{ selectedFeedback.destination }}</span>
+              </div>
+              <div class="metadata-item">
+                <span class="metadata-label">Date:</span>
+                <span class="metadata-value">{{ selectedFeedback.date }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-close" (click)="closeModal()">Close</button>
+            <button *ngIf="canDeleteFeedback && selectedFeedback" class="btn-delete" (click)="deleteFeedback(selectedFeedback.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div> 
+</ion-content>
