@@ -3,17 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  firebase: {
-    apiKey: "AIzaSy…",
-    authDomain: "seeways‑be14b.firebaseapp.com",
-    databaseURL: "https://seeways‑be14b-default-rtdb.firebaseio.com",
-    projectId: "seeways-be14b",
-    storageBucket: "seeways-be14b.firebasestorage.app",
-    messagingSenderId: "53598789861",
-    appId: "1:53598789861:web:bcae5bc7423a56de49b40c",
-    measurementId: "G-KZT8FJM8LD"
-  }
+  production: false
 };
 
 /*

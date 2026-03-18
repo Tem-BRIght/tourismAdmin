@@ -243,15 +243,16 @@ export class FeedbackRatingsPage implements OnInit {
 
   // ============= NAVIGATION FUNCTIONS =============
   navigateTo(page: string) {
-    const routes: { [key: string]: string } = {
-      'dashboard': '/dashboard',
-      'bookings': '/tourguide',
-      'feedback': '/feedback-ratings',
-      'monitoring': '/monitoring',
-      'number-of-tourist': '/number-of-tourist'
-    };
-    this.router.navigate([routes[page]]);
-  }
+  const routes: { [key: string]: string } = {
+    'dashboard': '/dashboard',
+    'bookings': '/tourguide',
+    'feedback': '/feedback-ratings',
+    'monitoring': '/monitoring',
+    'number-of-tourist': '/number-of-tourist',
+    'destinations': '/destinations'
+  };
+  this.router.navigate([routes[page]]);
+}
 
   // ============= LOGOUT FUNCTION =============
   logout() {

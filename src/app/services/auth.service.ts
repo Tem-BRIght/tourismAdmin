@@ -41,6 +41,7 @@ export class AuthService {
       superadmin: {
         users: { create: true, read: true, update: true, delete: true },
         destinations: { create: true, read: true, update: true, delete: true },
+        destination_content: { create: true, read: true, update: true, delete: true },
         tour_guides: { create: true, read: true, update: true, delete: true },
         bookings: { create: true, read: true, update: true, delete: true },
         feedback: { create: true, read: true, update: true, delete: true },
@@ -50,7 +51,8 @@ export class AuthService {
       },
       admin: {
         users: { create: false, read: true, update: false, delete: false },
-        destinations: { create: false, read: true, update: false, delete: false },
+        destinations: { create: true, read: true, update: true, delete: true },
+        destination_content: { create: true, read: true, update: true, delete: true },
         tour_guides: { create: false, read: true, update: true, delete: false },
         bookings: { create: true, read: true, update: true, delete: true },
         feedback: { create: false, read: true, update: false, delete: false },
@@ -61,6 +63,7 @@ export class AuthService {
       user: {
         users: { create: false, read: true, update: true, delete: false },
         destinations: { create: false, read: true, update: false, delete: false },
+        destination_content: { create: false, read: true, update: false, delete: false },
         tour_guides: { create: false, read: true, update: false, delete: false },
         bookings: { create: true, read: true, update: true, delete: true },
         feedback: { create: true, read: true, update: false, delete: false },
@@ -71,6 +74,18 @@ export class AuthService {
     };
 
     return matrix[role]?.[permission.table]?.[permission.action] || false;
+  }
+
+  // Specific permission helper for destinations
+  canManageDestinations(): boolean {
+    return this.hasAccess({ table: 'destination_content', action: 'create' }) ||
+           this.hasAccess({ table: 'destination_content', action: 'update' });
+  }
+
+  canUploadImages(): boolean {
+    // This is tied to update/create permissions
+    return this.hasAccess({ table: 'destination_content', action: 'create' }) ||
+           this.hasAccess({ table: 'destination_content', action: 'update' });
   }
 
   // Role check functions
